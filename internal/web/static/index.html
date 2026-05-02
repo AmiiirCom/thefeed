@@ -130,7 +130,6 @@
 
     .sidebar {
       max-width: 70vw;
-      transition: width 0.05s ease-out;
     }
 
     /* ===== LAYOUT ===== */
@@ -141,7 +140,6 @@
     }
 
     .sidebar {
-      width: 280px;
       min-width: 280px;
       background: var(--sidebar-bg);
       display: flex;
@@ -2318,10 +2316,6 @@
       }
       
       .sidebar {
-        max-width: none;
-      }
-
-      .sidebar {
         position: absolute;
         top: 0;
         left: 0;
@@ -2330,7 +2324,8 @@
         width: 100% !important;
         z-index: 2;
         transform: translateX(0);
-        transition: transform .25s ease
+        transition: transform .25s ease;
+        max-width: none;
       }
 
       .chat-area {
@@ -3546,7 +3541,7 @@
           var saved = localStorage.getItem('thefeed_sidebar_width');
           if (saved) {
             var w = parseInt(saved, 10);
-            if (!isNaN(w) && w >= 200 && w <= window.innerWidth * 0.7) {
+            if (!isNaN(w) && w >= 280 && w <= window.innerWidth * 0.7) {
               sidebar.style.width = w + 'px';
             }
           }
@@ -3556,7 +3551,7 @@
       function saveSidebarWidth() {
         try {
           var w = sidebar.offsetWidth;
-          if (w >= 200 && w <= window.innerWidth * 0.7) {
+          if (w >= 280 && w <= window.innerWidth * 0.7) {
             localStorage.setItem('thefeed_sidebar_width', w);
           }
         } catch(e) {}
@@ -3567,7 +3562,7 @@
         e.preventDefault();
         var newWidth = startWidth + (e.clientX - startX);
         var maxW = window.innerWidth * 0.7;
-        if (newWidth < 200) newWidth = 200;
+        if (newWidth < 280) newWidth = 280;
         if (newWidth > maxW) newWidth = maxW;
         sidebar.style.width = newWidth + 'px';
       }
@@ -3593,7 +3588,6 @@
         document.addEventListener('mouseup', onMouseUp);
       });
 
-
       handle.addEventListener('touchstart', function(e) {
         e.preventDefault();
         var touch = e.touches[0];
@@ -3601,17 +3595,17 @@
         startWidth = sidebar.offsetWidth;
         isDragging = true;
         document.body.style.userSelect = 'none';
-      });
+      }, { passive: false });
       document.addEventListener('touchmove', function(e) {
         if (!isDragging) return;
         var touch = e.touches[0];
         var newWidth = startWidth + (touch.clientX - startX);
         var maxW = window.innerWidth * 0.7;
-        if (newWidth < 200) newWidth = 200;
+        if (newWidth < 280) newWidth = 280;
         if (newWidth > maxW) newWidth = maxW;
         sidebar.style.width = newWidth + 'px';
         e.preventDefault();
-      });
+      }, { passive: false });
       document.addEventListener('touchend', function() {
         if (!isDragging) return;
         isDragging = false;
@@ -3620,7 +3614,7 @@
       });
 
       loadSidebarWidth();
-      
+
       window.addEventListener('resize', function() {
         var current = sidebar.offsetWidth;
         var maxW = window.innerWidth * 0.7;

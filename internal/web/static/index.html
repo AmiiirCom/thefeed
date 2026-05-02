@@ -100,6 +100,37 @@
       font-family: inherit
     }
 
+    /* ===== RESIZE HANDLE ===== */
+    .resize-handle {
+      width: 6px;
+      background: var(--border);
+      cursor: col-resize;
+      flex-shrink: 0;
+      transition: background 0.1s;
+      position: relative;
+      z-index: 5;
+    }
+
+    .resize-handle:hover,
+    .resize-handle:active {
+      background: var(--accent);
+    }
+
+    .resize-handle::before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      right: -4px;
+      top: 0;
+      bottom: 0;
+      background: transparent;
+    }
+
+    .sidebar {
+      max-width: 70vw;
+      transition: width 0.05s ease-out;
+    }
+
     /* ===== LAYOUT ===== */
     .app {
       display: flex;
@@ -1978,13 +2009,21 @@
         height: 100%
       }
 
+      .resize-handle {
+        display: none !important;
+      }
+      
+      .sidebar {
+        max-width: none;
+      }
+
       .sidebar {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        width: 100%;
+        width: 100% !important;
         z-index: 2;
         transform: translateX(0);
         transition: transform .25s ease
@@ -2106,6 +2145,9 @@
         <a href="https://github.com/sartoopjj/thefeed" target="_blank">GitHub</a>
       </div>
     </div>
+
+    <!-- RESIZE HANDLE -->
+    <div class="resize-handle" id="resizeHandle"></div>
 
     <!-- CHAT AREA -->
     <div class="chat-area">
@@ -3014,6 +3056,105 @@
         startAutoRefresh();
       } catch (e) { }
     }
+
+    // ===== RESIZABLE SIDEBAR =====
+    (function() {
+      var sidebar = document.getElementById('sidebar');
+      var handle = document.getElementById('resizeHandle');
+      if (!sidebar || !handle) return;
+
+      var startX, startWidth;
+      var isDragging = false;
+
+      function loadSidebarWidth() {
+        try {
+          var saved = localStorage.getItem('thefeed_sidebar_width');
+          if (saved) {
+            var w = parseInt(saved, 10);
+            if (!isNaN(w) && w >= 200 && w <= window.innerWidth * 0.7) {
+              sidebar.style.width = w + 'px';
+            }
+          }
+        } catch(e) {}
+      }
+
+      function saveSidebarWidth() {
+        try {
+          var w = sidebar.offsetWidth;
+          if (w >= 200 && w <= window.innerWidth * 0.7) {
+            localStorage.setItem('thefeed_sidebar_width', w);
+          }
+        } catch(e) {}
+      }
+
+      function onMouseMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        var newWidth = startWidth + (e.clientX - startX);
+        var maxW = window.innerWidth * 0.7;
+        if (newWidth < 200) newWidth = 200;
+        if (newWidth > maxW) newWidth = maxW;
+        sidebar.style.width = newWidth + 'px';
+      }
+
+      function onMouseUp() {
+        if (!isDragging) return;
+        isDragging = false;
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        saveSidebarWidth();
+      }
+
+      handle.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        startX = e.clientX;
+        startWidth = sidebar.offsetWidth;
+        isDragging = true;
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      });
+
+      // برای لمسی (موبایل‌های بزرگ یا تبلت) – ساده ولی کاربردی
+      handle.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        var touch = e.touches[0];
+        startX = touch.clientX;
+        startWidth = sidebar.offsetWidth;
+        isDragging = true;
+        document.body.style.userSelect = 'none';
+      });
+      document.addEventListener('touchmove', function(e) {
+        if (!isDragging) return;
+        var touch = e.touches[0];
+        var newWidth = startWidth + (touch.clientX - startX);
+        var maxW = window.innerWidth * 0.7;
+        if (newWidth < 200) newWidth = 200;
+        if (newWidth > maxW) newWidth = maxW;
+        sidebar.style.width = newWidth + 'px';
+        e.preventDefault();
+      });
+      document.addEventListener('touchend', function() {
+        if (!isDragging) return;
+        isDragging = false;
+        document.body.style.userSelect = '';
+        saveSidebarWidth();
+      });
+
+      loadSidebarWidth();
+      // تنظیم مجدد در صورت تغییر اندازه پنجره
+      window.addEventListener('resize', function() {
+        var current = sidebar.offsetWidth;
+        var maxW = window.innerWidth * 0.7;
+        if (current > maxW) {
+          sidebar.style.width = maxW + 'px';
+          saveSidebarWidth();
+        }
+      });
+    })();
 
     // ===== FONT SIZE =====
     async function loadFontSize() {

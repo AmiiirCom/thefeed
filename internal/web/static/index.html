@@ -3118,7 +3118,7 @@
         document.addEventListener('mouseup', onMouseUp);
       });
 
-      // برای لمسی (موبایل‌های بزرگ یا تبلت) – ساده ولی کاربردی
+
       handle.addEventListener('touchstart', function(e) {
         e.preventDefault();
         var touch = e.touches[0];
@@ -3145,7 +3145,7 @@
       });
 
       loadSidebarWidth();
-      // تنظیم مجدد در صورت تغییر اندازه پنجره
+      
       window.addEventListener('resize', function() {
         var current = sidebar.offsetWidth;
         var maxW = window.innerWidth * 0.7;

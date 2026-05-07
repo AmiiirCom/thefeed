@@ -82,7 +82,7 @@ thefeed یک سیستم تونل DNS است که به شما اجازه می‌�
 رابط وب شامل یک اسکنر ریزالور داخلی است (آیکون 🔍 در نوار کناری) که بازه‌های IP را بررسی می‌کند تا سرورهای DNS قابل دسترسی به سرور thefeed شما را پیدا کند:
 
 - **اهداف متنوع**: آی‌پی‌های تکی، CIDR (مثل `5.1.0.0/16`)، یا نام دامنه — هر خط یکی
-- **بارگذاری CIDR ایران**: دکمه یک‌کلیکی برای بارگذاری لیست بازه‌های ISP ایران
+- **بارگذاری CIDR پیش‌فرض**: دکمه یک‌کلیکی برای بارگذاری لیست پیش‌فرض بازه‌های ISP
 - **پاک کردن اهداف**: دکمه برای پاک کردن سریع لیست CIDR/IP اسکنر
 - **انتخاب پروفایل**: انتخاب کنید کدام پروفایل برای تست استفاده شود
 - **قابل تنظیم**: همزمانی (پیش‌فرض ۵۰)، تایم‌اوت (پیش‌فرض ۱۵ ثانیه)، حداکثر آی‌پی
@@ -146,6 +146,7 @@ thefeed یک سیستم تونل DNS است که به شما اجازه می‌�
 - کانال کانفیگ عمومی دفید: [@thefeedconfig](https://t.me/thefeedconfig)
 - راهنمای نصب سرور دفید: [@networkti](https://t.me/networkti/25)
 - راهنمای نصب سرور دفید با اسلیپ گیت: [@networkti](https://t.me/networkti/200)
+- لیست تسک‌ها و رودمپ پروژه: [بورد گیتهاب](https://github.com/users/sartoopjj/projects/1/views/1)
 
 ## ⚡ نصب سریع سرور
 
@@ -350,7 +351,7 @@ chmod +x thefeed-client
 
 ### اندروید (نسخه APK)
 
-از صفحه‌ی [Releases](https://github.com/sartoopjj/thefeed/releases) فایل APK مناسب گوشی خود را دانلود کنید:
+از صفحه‌ی [Releases](https://github.com/sartoopjj/thefeed/releases) فایل APK مناسب گوشی خود را دانلود کنید (نیازمند اندروید ۷ یا بالاتر):
 
 - `thefeed-android-<version>-arm64-v8a.apk` — برای گوشی‌های ۶۴ بیتی (تقریباً همه‌ی گوشی‌های جدید از سال ۱۳۹۶ به بعد). **این گزینه برای اکثر کاربران درست است.**
 - `thefeed-android-<version>-armeabi-v7a.apk` — فقط برای گوشی‌های قدیمی ۳۲ بیتی.
@@ -360,6 +361,19 @@ chmod +x thefeed-client
 > برای دیدن معماری دقیق گوشی: تنظیمات → درباره‌ی گوشی → یا با اپ‌هایی مثل CPU-Z معماری CPU را ببینید (`arm64-v8a` یا `armeabi-v7a`).
 
 برنامه در اولین اجرا اجازه‌ی Battery Optimization Exemption را می‌گیرد تا سرویس پس‌زمینه توسط سیستم بسته نشود.
+
+### iOS
+
+نسخه‌ی iOS در حال توسعه است. سورس در پوشه‌ی [`ios/`](ios/) قرار دارد. برای ساخت روی مک:
+
+```
+go install golang.org/x/mobile/cmd/gomobile@latest && gomobile init
+make ios-bind        # ساخت Mobile.xcframework
+make ios-build       # بیلد روی iOS Simulator
+make ios-test        # اجرای تست‌ها
+```
+
+سپس `ios/Thefeed.xcodeproj` را در Xcode باز کنید.
 
 ## ⚙️ تنظیمات DNS
 
@@ -484,7 +498,7 @@ MIT
 
 <div align="center">
 
-**برای ایران آزاد** <img src="internal/web/static/iran-lion-sun.svg" alt="شیر و خورشید" height="20">
+**برای ایران آزاد** <img src="internal/web/static/lion-sun.svg" alt="شیر و خورشید" height="20">
 
 *هر ایرانی حق دسترسی آزاد به اطلاعات را دارد*
 
